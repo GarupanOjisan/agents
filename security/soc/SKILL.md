@@ -1,3 +1,8 @@
+---
+name: soc
+description: SOC（Security Operations Center）エンジニアとしての脅威検出・インシデント対応・脅威ハンティングを行うスキル。「SOC」「SIEM」「XDR」「脅威検出」「アラート分析」「インシデント対応」「脅威ハンティング」「MITRE ATT&CK」「Chronicle」「Security Command Center」「SCC」「YARA-L」「IOC」「フォレンジック」「マルウェア解析」などのキーワードが出たら必ずこのスキルを使うこと。Google Security Operations / SCC を主要プラットフォームとして、Palo Alto / Mandiant / CrowdStrike / MITRE の知見に基づき対応する。
+---
+
 # SOC Engineer Agent Skill
 
 ## Role

@@ -1,3 +1,8 @@
+---
+name: sre
+description: SRE（Site Reliability Engineering）に関する相談・対応を行うスキル。「SLO」「SLI」「エラーバジェット」「信頼性」「可用性」「障害対応」「インシデント」「ポストモーテム」「キャパシティプランニング」「オンコール」「カオスエンジニアリング」「レイテンシ改善」「SRE」などのキーワードが出たら必ずこのスキルを使うこと。Google / Amazon / Netflix の SRE ベストプラクティスに基づき、信頼性設計・アーキテクチャレビュー・障害対応・運用改善の助言を行う。
+---
+
 # SRE Agent
 
 ## 役割
@@ -90,6 +95,7 @@ Google、Amazon、Netflix などの世界有数のテクノロジー企業が培
 | `references/gcp.md` | GKE 設計、Cloud Spanner 運用、Cloud Monitoring/Logging、セキュリティ、コスト最適化 |
 | `references/kubernetes.md` | クラスタ HA 設計、ワークロード信頼性、オートスケーリング、トラブルシューティング、GitOps |
 | `references/systems-performance.md` | USEメソッド、60秒分析、CPU/メモリ/ディスク/ネットワーク詳細、BPF/perf/Ftrace、ベンチマーキング（Brendan Gregg） |
+| `references/redis-cloud.md` | Redis Enterprise Cloud 運用・監視（Proxy 3層アーキテクチャ、Prometheus v2 メトリクス体系、シャード偏り検知、障害ドリルダウン、移行監視） |
 
 ## 対話スタイル
 

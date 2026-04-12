@@ -1,0 +1,1078 @@
+{
+  "displayName": "Redis Cloud - Unified Dashboard",
+  "labels": {
+    "redis": ""
+  },
+  "mosaicLayout": {
+    "columns": 24,
+    "tiles": [
+      {
+        "width": 24,
+        "height": 2,
+        "widget": {
+          "title": "Section 1: Health Summary",
+          "text": {
+            "content": "",
+            "format": "RAW"
+          }
+        }
+      },
+      {
+        "yPos": 2,
+        "width": 4,
+        "height": 4,
+        "widget": {
+          "title": "prod DB Status",
+          "scorecard": {
+            "timeSeriesQuery": {
+              "prometheusQuery": "db_status{db=\"11641044\"}"
+            },
+            "sparkChartView": {
+              "sparkChartType": "SPARK_LINE"
+            },
+            "thresholds": [
+              {
+                "value": 1,
+                "color": "RED",
+                "direction": "ABOVE"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "yPos": 2,
+        "xPos": 4,
+        "width": 4,
+        "height": 4,
+        "widget": {
+          "title": "prod-cluster DB Status",
+          "scorecard": {
+            "timeSeriesQuery": {
+              "prometheusQuery": "db_status{db=\"14142587\"}"
+            },
+            "sparkChartView": {
+              "sparkChartType": "SPARK_LINE"
+            },
+            "thresholds": [
+              {
+                "value": 1,
+                "color": "RED",
+                "direction": "ABOVE"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "yPos": 2,
+        "xPos": 8,
+        "width": 4,
+        "height": 4,
+        "widget": {
+          "title": "Cluster Quorum",
+          "scorecard": {
+            "timeSeriesQuery": {
+              "prometheusQuery": "min(has_quorum)"
+            },
+            "sparkChartView": {
+              "sparkChartType": "SPARK_LINE"
+            },
+            "thresholds": [
+              {
+                "value": 1,
+                "color": "RED",
+                "direction": "BELOW"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "yPos": 2,
+        "xPos": 12,
+        "width": 4,
+        "height": 4,
+        "widget": {
+          "title": "Live Nodes",
+          "scorecard": {
+            "timeSeriesQuery": {
+              "prometheusQuery": "sum(total_live_nodes_count) / sum(total_nodes_count)"
+            },
+            "sparkChartView": {
+              "sparkChartType": "SPARK_LINE"
+            },
+            "thresholds": [
+              {
+                "value": 1,
+                "color": "RED",
+                "direction": "BELOW"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "yPos": 2,
+        "xPos": 16,
+        "width": 4,
+        "height": 4,
+        "widget": {
+          "title": "Dispatch Failures (5m)",
+          "scorecard": {
+            "timeSeriesQuery": {
+              "prometheusQuery": "sum(increase(endpoint_dispatch_failures_total[5m]))"
+            },
+            "sparkChartView": {
+              "sparkChartType": "SPARK_LINE"
+            },
+            "thresholds": [
+              {
+                "value": 1,
+                "color": "RED",
+                "direction": "ABOVE"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "yPos": 2,
+        "xPos": 20,
+        "width": 4,
+        "height": 4,
+        "widget": {
+          "title": "Conn Errors (5m)",
+          "scorecard": {
+            "timeSeriesQuery": {
+              "prometheusQuery": "sum(increase(endpoint_client_establishment_failures_total[5m]))"
+            },
+            "sparkChartView": {
+              "sparkChartType": "SPARK_LINE"
+            },
+            "thresholds": [
+              {
+                "value": 1,
+                "color": "RED",
+                "direction": "ABOVE"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "yPos": 6,
+        "width": 24,
+        "height": 2,
+        "widget": {
+          "title": "Section 2: Latency (prod | prod-cluster)",
+          "text": {
+            "content": "",
+            "format": "RAW"
+          }
+        }
+      },
+      {
+        "yPos": 8,
+        "width": 12,
+        "height": 8,
+        "widget": {
+          "title": "Read Latency (prod) - p50 / p99",
+          "xyChart": {
+            "dataSets": [
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "histogram_quantile(0.5, sum by (le) (rate(endpoint_read_requests_latency_histogram_bucket{db=\"11641044\"}[5m])))"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "p50"
+              },
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "histogram_quantile(0.99, sum by (le) (rate(endpoint_read_requests_latency_histogram_bucket{db=\"11641044\"}[5m])))"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "p99"
+              }
+            ],
+            "yAxis": {
+              "label": "Latency (us)"
+            }
+          }
+        }
+      },
+      {
+        "yPos": 8,
+        "xPos": 12,
+        "width": 12,
+        "height": 8,
+        "widget": {
+          "title": "Read Latency (prod-cluster) - p50 / p99",
+          "xyChart": {
+            "dataSets": [
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "histogram_quantile(0.5, sum by (le) (rate(endpoint_read_requests_latency_histogram_bucket{db=\"14142587\"}[5m])))"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "p50"
+              },
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "histogram_quantile(0.99, sum by (le) (rate(endpoint_read_requests_latency_histogram_bucket{db=\"14142587\"}[5m])))"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "p99"
+              }
+            ],
+            "yAxis": {
+              "label": "Latency (us)"
+            }
+          }
+        }
+      },
+      {
+        "yPos": 16,
+        "width": 12,
+        "height": 8,
+        "widget": {
+          "title": "Write Latency (prod) - p50 / p99",
+          "xyChart": {
+            "dataSets": [
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "histogram_quantile(0.5, sum by (le) (rate(endpoint_write_requests_latency_histogram_bucket{db=\"11641044\"}[5m])))"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "p50"
+              },
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "histogram_quantile(0.99, sum by (le) (rate(endpoint_write_requests_latency_histogram_bucket{db=\"11641044\"}[5m])))"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "p99"
+              }
+            ],
+            "yAxis": {
+              "label": "Latency (us)"
+            }
+          }
+        }
+      },
+      {
+        "yPos": 16,
+        "xPos": 12,
+        "width": 12,
+        "height": 8,
+        "widget": {
+          "title": "Write Latency (prod-cluster) - p50 / p99",
+          "xyChart": {
+            "dataSets": [
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "histogram_quantile(0.5, sum by (le) (rate(endpoint_write_requests_latency_histogram_bucket{db=\"14142587\"}[5m])))"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "p50"
+              },
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "histogram_quantile(0.99, sum by (le) (rate(endpoint_write_requests_latency_histogram_bucket{db=\"14142587\"}[5m])))"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "p99"
+              }
+            ],
+            "yAxis": {
+              "label": "Latency (us)"
+            }
+          }
+        }
+      },
+      {
+        "yPos": 24,
+        "width": 24,
+        "height": 2,
+        "widget": {
+          "title": "Section 3: Throughput & Connections",
+          "text": {
+            "content": "",
+            "format": "RAW"
+          }
+        }
+      },
+      {
+        "yPos": 26,
+        "width": 12,
+        "height": 8,
+        "widget": {
+          "title": "Ops/sec (prod)",
+          "xyChart": {
+            "dataSets": [
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "sum(rate(endpoint_read_requests_total{db=\"11641044\"}[5m]))"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "read"
+              },
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "sum(rate(endpoint_write_requests_total{db=\"11641044\"}[5m]))"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "write"
+              },
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "sum(rate(endpoint_other_requests_total{db=\"11641044\"}[5m]))"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "other"
+              }
+            ],
+            "yAxis": {
+              "label": "ops/sec"
+            }
+          }
+        }
+      },
+      {
+        "yPos": 26,
+        "xPos": 12,
+        "width": 12,
+        "height": 8,
+        "widget": {
+          "title": "Ops/sec (prod-cluster)",
+          "xyChart": {
+            "dataSets": [
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "sum(rate(endpoint_read_requests_total{db=\"14142587\"}[5m]))"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "read"
+              },
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "sum(rate(endpoint_write_requests_total{db=\"14142587\"}[5m]))"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "write"
+              },
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "sum(rate(endpoint_other_requests_total{db=\"14142587\"}[5m]))"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "other"
+              }
+            ],
+            "yAxis": {
+              "label": "ops/sec"
+            }
+          }
+        }
+      },
+      {
+        "yPos": 34,
+        "width": 12,
+        "height": 8,
+        "widget": {
+          "title": "Connected Clients",
+          "xyChart": {
+            "dataSets": [
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "sum by (db_name) (redis_server_connected_clients{db=\"11641044\", role=\"master\"})"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "{{db_name}}"
+              },
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "sum by (db_name) (redis_server_connected_clients{db=\"14142587\", role=\"master\"})"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "{{db_name}}"
+              }
+            ],
+            "yAxis": {
+              "label": "clients"
+            }
+          }
+        }
+      },
+      {
+        "yPos": 34,
+        "xPos": 12,
+        "width": 12,
+        "height": 8,
+        "widget": {
+          "title": "Connection & Dispatch Errors",
+          "xyChart": {
+            "dataSets": [
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "sum(rate(endpoint_client_establishment_failures_total[5m]))"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "establishment failures"
+              },
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "sum(rate(endpoint_dispatch_failures_total[5m]))"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "dispatch failures"
+              }
+            ],
+            "yAxis": {
+              "label": "errors/sec"
+            }
+          }
+        }
+      },
+      {
+        "yPos": 42,
+        "width": 24,
+        "height": 8,
+        "widget": {
+          "title": "Node Ops/sec (400k limit per node)",
+          "xyChart": {
+            "dataSets": [
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "sum by (node, exported_cluster) (rate(endpoint_read_requests_total[5m]) + rate(endpoint_write_requests_total[5m]) + rate(endpoint_other_requests_total[5m]))"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "node-{{node}}"
+              }
+            ],
+            "yAxis": {
+              "label": "ops/sec"
+            },
+            "thresholds": [
+              {
+                "value": 400000
+              }
+            ]
+          }
+        }
+      },
+      {
+        "yPos": 50,
+        "width": 24,
+        "height": 2,
+        "widget": {
+          "title": "Section 4: Memory & Keyspace",
+          "text": {
+            "content": "",
+            "format": "RAW"
+          }
+        }
+      },
+      {
+        "yPos": 52,
+        "width": 8,
+        "height": 8,
+        "widget": {
+          "title": "Memory Usage % (prod)",
+          "xyChart": {
+            "dataSets": [
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "sum(redis_server_used_memory{db=\"11641044\"}) / max(db_memory_limit_bytes{db=\"11641044\"}) * 100"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "usage %"
+              }
+            ],
+            "yAxis": {
+              "label": "%"
+            },
+            "thresholds": [
+              {
+                "value": 80
+              },
+              {
+                "value": 90
+              }
+            ]
+          }
+        }
+      },
+      {
+        "yPos": 52,
+        "xPos": 8,
+        "width": 8,
+        "height": 8,
+        "widget": {
+          "title": "Memory Usage % (prod-cluster)",
+          "xyChart": {
+            "dataSets": [
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "sum(redis_server_used_memory{db=\"14142587\"}) / max(db_memory_limit_bytes{db=\"14142587\"}) * 100"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "usage %"
+              }
+            ],
+            "yAxis": {
+              "label": "%"
+            },
+            "thresholds": [
+              {
+                "value": 80
+              },
+              {
+                "value": 90
+              }
+            ]
+          }
+        }
+      },
+      {
+        "yPos": 52,
+        "xPos": 16,
+        "width": 8,
+        "height": 8,
+        "widget": {
+          "title": "Evicted Keys (total)",
+          "xyChart": {
+            "dataSets": [
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "sum by (db) (redis_server_evicted_keys)"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "{{db}}"
+              }
+            ],
+            "yAxis": {
+              "label": "keys (cumulative)"
+            }
+          }
+        }
+      },
+      {
+        "yPos": 60,
+        "width": 8,
+        "height": 8,
+        "widget": {
+          "title": "Key Count",
+          "xyChart": {
+            "dataSets": [
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "sum by (db) (redis_server_db0_keys)"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "{{db}}"
+              }
+            ],
+            "yAxis": {
+              "label": "keys"
+            }
+          }
+        }
+      },
+      {
+        "yPos": 60,
+        "xPos": 8,
+        "width": 8,
+        "height": 8,
+        "widget": {
+          "title": "Keyspace Hits / Misses",
+          "xyChart": {
+            "dataSets": [
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "sum(redis_server_keyspace_read_hits{db=\"11641044\"})"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "prod hits"
+              },
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "sum(redis_server_keyspace_read_misses{db=\"11641044\"})"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "prod misses"
+              },
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "sum(redis_server_keyspace_read_hits{db=\"14142587\"})"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "prod-cluster hits"
+              },
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "sum(redis_server_keyspace_read_misses{db=\"14142587\"})"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "prod-cluster misses"
+              }
+            ],
+            "yAxis": {
+              "label": "operations (cumulative)"
+            }
+          }
+        }
+      },
+      {
+        "yPos": 60,
+        "xPos": 16,
+        "width": 8,
+        "height": 8,
+        "widget": {
+          "title": "Fragmentation Ratio",
+          "xyChart": {
+            "dataSets": [
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "avg by (db) (redis_server_mem_fragmentation_ratio)"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "{{db}}"
+              }
+            ],
+            "yAxis": {
+              "label": "ratio"
+            },
+            "thresholds": [
+              {
+                "value": 1.5
+              },
+              {
+                "value": 2.0
+              }
+            ]
+          }
+        }
+      },
+      {
+        "yPos": 68,
+        "width": 24,
+        "height": 2,
+        "widget": {
+          "title": "Section 5: Shard Health (prod-cluster)",
+          "text": {
+            "content": "",
+            "format": "RAW"
+          }
+        }
+      },
+      {
+        "yPos": 70,
+        "width": 12,
+        "height": 8,
+        "widget": {
+          "title": "Shard Memory (prod-cluster)",
+          "xyChart": {
+            "dataSets": [
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "redis_server_used_memory{db=\"14142587\", role=\"master\"}"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "shard-{{redis}}"
+              }
+            ],
+            "yAxis": {
+              "label": "bytes"
+            }
+          }
+        }
+      },
+      {
+        "yPos": 70,
+        "xPos": 12,
+        "width": 12,
+        "height": 8,
+        "widget": {
+          "title": "Shard CPU (prod-cluster)",
+          "xyChart": {
+            "dataSets": [
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "rate(namedprocess_namegroup_cpu_seconds_total{db=\"14142587\", mode=\"user\"}[5m])"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "shard-{{redis}}"
+              }
+            ],
+            "yAxis": {
+              "label": "CPU seconds/sec"
+            }
+          }
+        }
+      },
+      {
+        "yPos": 78,
+        "width": 6,
+        "height": 4,
+        "widget": {
+          "title": "Mem Skew (max/avg)",
+          "scorecard": {
+            "timeSeriesQuery": {
+              "prometheusQuery": "max(redis_server_used_memory{db=\"14142587\", role=\"master\"}) / avg(redis_server_used_memory{db=\"14142587\", role=\"master\"})"
+            },
+            "sparkChartView": {
+              "sparkChartType": "SPARK_LINE"
+            },
+            "thresholds": [
+              {
+                "value": 1.3,
+                "color": "YELLOW",
+                "direction": "ABOVE"
+              },
+              {
+                "value": 1.5,
+                "color": "RED",
+                "direction": "ABOVE"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "yPos": 78,
+        "xPos": 6,
+        "width": 6,
+        "height": 4,
+        "widget": {
+          "title": "CPU Skew (max/avg)",
+          "scorecard": {
+            "timeSeriesQuery": {
+              "prometheusQuery": "max(rate(namedprocess_namegroup_cpu_seconds_total{db=\"14142587\", mode=\"user\"}[5m])) / avg(rate(namedprocess_namegroup_cpu_seconds_total{db=\"14142587\", mode=\"user\"}[5m]))"
+            },
+            "sparkChartView": {
+              "sparkChartType": "SPARK_LINE"
+            },
+            "thresholds": [
+              {
+                "value": 1.5,
+                "color": "YELLOW",
+                "direction": "ABOVE"
+              },
+              {
+                "value": 2.0,
+                "color": "RED",
+                "direction": "ABOVE"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "yPos": 78,
+        "xPos": 12,
+        "width": 6,
+        "height": 4,
+        "widget": {
+          "title": "Forwarding State",
+          "scorecard": {
+            "timeSeriesQuery": {
+              "prometheusQuery": "count(redis_server_forwarding_state{db=\"14142587\"} > 0) or vector(0)"
+            },
+            "sparkChartView": {
+              "sparkChartType": "SPARK_LINE"
+            },
+            "thresholds": [
+              {
+                "value": 1,
+                "color": "YELLOW",
+                "direction": "ABOVE"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "yPos": 78,
+        "xPos": 18,
+        "width": 6,
+        "height": 4,
+        "widget": {
+          "title": "Replication Link",
+          "scorecard": {
+            "timeSeriesQuery": {
+              "prometheusQuery": "min(redis_server_master_link_status{db=\"14142587\"})"
+            },
+            "sparkChartView": {
+              "sparkChartType": "SPARK_LINE"
+            },
+            "thresholds": [
+              {
+                "value": 1,
+                "color": "RED",
+                "direction": "BELOW"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "yPos": 82,
+        "width": 24,
+        "height": 2,
+        "widget": {
+          "title": "Section 6: Node & Network",
+          "text": {
+            "content": "",
+            "format": "RAW"
+          }
+        }
+      },
+      {
+        "yPos": 84,
+        "width": 12,
+        "height": 8,
+        "widget": {
+          "title": "Node Available Memory",
+          "xyChart": {
+            "dataSets": [
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "node_available_memory_bytes"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "node-{{node}} ({{exported_cluster}})"
+              }
+            ],
+            "yAxis": {
+              "label": "bytes"
+            }
+          }
+        }
+      },
+      {
+        "yPos": 84,
+        "xPos": 12,
+        "width": 12,
+        "height": 8,
+        "widget": {
+          "title": "Network I/O (per node)",
+          "xyChart": {
+            "dataSets": [
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "sum by (node, exported_cluster) (rate(node_network_receive_bytes_total[5m]))"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "rx node-{{node}}"
+              },
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "sum by (node, exported_cluster) (rate(node_network_transmit_bytes_total[5m]))"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "tx node-{{node}}"
+              }
+            ],
+            "yAxis": {
+              "label": "bytes/sec"
+            }
+          }
+        }
+      },
+      {
+        "yPos": 92,
+        "width": 8,
+        "height": 8,
+        "widget": {
+          "title": "Egress Pending Rate",
+          "xyChart": {
+            "dataSets": [
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "sum by (db_name) (rate(endpoint_egress_pending_total[5m]))"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "{{db_name}}"
+              }
+            ],
+            "yAxis": {
+              "label": "bytes/sec"
+            }
+          }
+        }
+      },
+      {
+        "yPos": 92,
+        "xPos": 8,
+        "width": 8,
+        "height": 8,
+        "widget": {
+          "title": "Proxy Disconnections & Rate Limit",
+          "xyChart": {
+            "dataSets": [
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "sum(rate(endpoint_proxy_disconnections_total[5m]))"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "proxy disconnections"
+              },
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "sum(rate(endpoint_rate_limit_overflows_total[5m]))"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "rate limit overflows"
+              }
+            ],
+            "yAxis": {
+              "label": "/sec"
+            }
+          }
+        }
+      },
+      {
+        "yPos": 92,
+        "xPos": 16,
+        "width": 8,
+        "height": 4,
+        "widget": {
+          "title": "Certificate Expiry (days)",
+          "scorecard": {
+            "timeSeriesQuery": {
+              "prometheusQuery": "min(node_cert_expires_in_seconds) / 86400"
+            },
+            "sparkChartView": {
+              "sparkChartType": "SPARK_LINE"
+            },
+            "thresholds": [
+              {
+                "value": 30,
+                "color": "YELLOW",
+                "direction": "BELOW"
+              },
+              {
+                "value": 7,
+                "color": "RED",
+                "direction": "BELOW"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "yPos": 100,
+        "width": 24,
+        "height": 2,
+        "widget": {
+          "title": "Section 7: Migration Monitoring (prod → prod-cluster)",
+          "text": {
+            "content": "",
+            "format": "RAW"
+          }
+        }
+      },
+      {
+        "yPos": 102,
+        "width": 24,
+        "height": 8,
+        "widget": {
+          "title": "Traffic Shift (prod vs prod-cluster)",
+          "xyChart": {
+            "dataSets": [
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "sum(rate(endpoint_read_requests_total{db=\"11641044\"}[5m])) + sum(rate(endpoint_write_requests_total{db=\"11641044\"}[5m]))"
+                },
+                "plotType": "STACKED_AREA",
+                "legendTemplate": "prod"
+              },
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "sum(rate(endpoint_read_requests_total{db=\"14142587\"}[5m])) + sum(rate(endpoint_write_requests_total{db=\"14142587\"}[5m]))"
+                },
+                "plotType": "STACKED_AREA",
+                "legendTemplate": "prod-cluster"
+              }
+            ],
+            "yAxis": {
+              "label": "ops/sec"
+            }
+          }
+        }
+      },
+      {
+        "yPos": 110,
+        "width": 12,
+        "height": 8,
+        "widget": {
+          "title": "prod Requests (should approach 0)",
+          "xyChart": {
+            "dataSets": [
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "sum(rate(endpoint_read_requests_total{db=\"11641044\"}[5m]))"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "read"
+              },
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "sum(rate(endpoint_write_requests_total{db=\"11641044\"}[5m]))"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "write"
+              }
+            ],
+            "yAxis": {
+              "label": "ops/sec"
+            }
+          }
+        }
+      },
+      {
+        "yPos": 110,
+        "xPos": 12,
+        "width": 12,
+        "height": 8,
+        "widget": {
+          "title": "prod-cluster Requests",
+          "xyChart": {
+            "dataSets": [
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "sum(rate(endpoint_read_requests_total{db=\"14142587\"}[5m]))"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "read"
+              },
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "sum(rate(endpoint_write_requests_total{db=\"14142587\"}[5m]))"
+                },
+                "plotType": "LINE",
+                "legendTemplate": "write"
+              }
+            ],
+            "yAxis": {
+              "label": "ops/sec"
+            }
+          }
+        }
+      },
+      {
+        "yPos": 118,
+        "width": 24,
+        "height": 6,
+        "widget": {
+          "title": "Migration Completion Checklist",
+          "text": {
+            "content": "## Migration Completion Criteria\n\nAll conditions must be met before decommissioning prod:\n\n- [ ] prod-cluster request ratio > 99% sustained for 24 hours\n- [ ] prod-cluster p99 latency <= 1.2x prod's p99 latency\n- [ ] prod-cluster evicted_keys = 0\n- [ ] prod requests effectively at 0 (including background jobs)\n- [ ] prod-cluster shard skew coefficient < 1.3\n- [ ] DR procedure tested (failover test completed)",
+            "format": "MARKDOWN"
+          }
+        }
+      }
+    ]
+  }
+}
