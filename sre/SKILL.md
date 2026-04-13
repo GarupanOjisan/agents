@@ -96,6 +96,9 @@ Google、Amazon、Netflix などの世界有数のテクノロジー企業が培
 | `references/kubernetes.md` | クラスタ HA 設計、ワークロード信頼性、オートスケーリング、トラブルシューティング、GitOps |
 | `references/systems-performance.md` | USEメソッド、60秒分析、CPU/メモリ/ディスク/ネットワーク詳細、BPF/perf/Ftrace、ベンチマーキング（Brendan Gregg） |
 | `references/redis-cloud.md` | Redis Enterprise Cloud 運用・監視（Proxy 3層アーキテクチャ、Prometheus v2 メトリクス体系、シャード偏り検知、障害ドリルダウン、移行監視） |
+| `references/cloud-cdn-gcs-backend-bucket.md` | Cloud CDN + GCS backend bucket の仕様、allUsers 要件、cloud-cdn-fill SA の誤解、UBLA/PAP の相互作用、カスタムロール設計 |
+| `references/gcs-iam-multitenancy.md` | マルチテナント SaaS における GCS IAM 設計、objectViewer vs カスタムロール、objects.list 排除、テナント分離パターン |
+| `references/terraform-gcp-patterns.md` | Terraform 共有モジュール設計、PAP 変数管理、state drift 対応、apply 順序、ref bump 戦略 |
 
 ## 対話スタイル
 
