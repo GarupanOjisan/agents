@@ -1,6 +1,6 @@
 ---
 name: sre
-description: SRE（Site Reliability Engineering）に関する相談・対応を行うスキル。「SLO」「SLI」「エラーバジェット」「信頼性」「可用性」「障害対応」「インシデント」「ポストモーテム」「キャパシティプランニング」「オンコール」「カオスエンジニアリング」「レイテンシ改善」「SRE」などのキーワードが出たら必ずこのスキルを使うこと。Google / Amazon / Netflix の SRE ベストプラクティスに基づき、信頼性設計・アーキテクチャレビュー・障害対応・運用改善の助言を行う。
+description: SRE（Site Reliability Engineering）に関する相談・対応を行うスキル。「SLO」「SLI」「エラーバジェット」「信頼性」「可用性」「障害対応」「インシデント」「ポストモーテム」「キャパシティプランニング」「オンコール」「カオスエンジニアリング」「レイテンシ改善」「SRE」「Cloud Spanner」「Spanner」「インターリーブ」「ホットスポット」「PITR」「バックアップ」などのキーワードが出たら必ずこのスキルを使うこと。Google / Amazon / Netflix の SRE ベストプラクティスと ColorSing の運用知見に基づき、信頼性設計・アーキテクチャレビュー・障害対応・運用改善の助言を行う。
 ---
 
 # SRE Agent
@@ -42,7 +42,7 @@ Google、Amazon、Netflix などの世界有数のテクノロジー企業が培
 
 ### 5. GCP 運用
 - GKE の信頼性設計とアップグレード戦略
-- Cloud Spanner の運用（ホットスポット回避、バックアップ、モニタリング）
+- Cloud Spanner の運用（ホットスポット回避、インターリーブ設計、RW/RO トランザクション設計、悲観ロック、PITR、エアギャップバックアップ、Key Visualizer、SPANNER_SYS を使った分析）
 - Cloud Monitoring / Logging / Trace の活用
 - Cloud Load Balancing、Cloud Armor の設計
 - IAM、Secret Manager、VPC Service Controls のセキュリティ設計
@@ -93,6 +93,8 @@ Google、Amazon、Netflix などの世界有数のテクノロジー企業が培
 | `references/netflix-chaos.md` | カオスエンジニアリング原則、Simian Army、レジリエンスパターン、カナリア分析（Kayenta）、Spinnaker |
 | `references/general-sre.md` | オブザーバビリティ三本柱、インシデント管理フレームワーク、ランブック、パフォーマンスエンジニアリング |
 | `references/gcp.md` | GKE 設計、Cloud Spanner 運用、Cloud Monitoring/Logging、セキュリティ、コスト最適化 |
+| `references/cloud-spanner.md` | Cloud Spanner 汎用ベストプラクティス — スキーマ設計、クエリ最適化、トランザクション、監視（SPANNER_SYS）、クライアントパターン、コスト、セキュリティの正本 |
+| `references/cloud-spanner/` | ColorSing 固有の Spanner 実装・運用ドキュメント群の SSOT — 初級編7ルール、悲観ロック運用（Redis）、Stale Read 使い分け、Partitioned DML、Change Streams、セッションプール、トランザクションタグ、多層防御バックアップ方針、リストアリハーサル。Spanner 関連の相談を受けたらここを必ず参照 |
 | `references/kubernetes.md` | クラスタ HA 設計、ワークロード信頼性、オートスケーリング、トラブルシューティング、GitOps |
 | `references/systems-performance.md` | USEメソッド、60秒分析、CPU/メモリ/ディスク/ネットワーク詳細、BPF/perf/Ftrace、ベンチマーキング（Brendan Gregg） |
 | `references/redis-cloud.md` | Redis Enterprise Cloud 運用・監視（Proxy 3層アーキテクチャ、Prometheus v2 メトリクス体系、シャード偏り検知、障害ドリルダウン、移行監視） |
