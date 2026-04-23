@@ -191,11 +191,11 @@ ALTER TABLE PubsubMessages ADD ROW DELETION POLICY (OLDER_THAN(CreatedAt, INTERV
 ※ TTL を 1 日としても厳密に 1 日経ったら消えるわけではない。1 日以上経ったら Spanner が任意のタイミングで消す。
 
 > **⚠️ 警告: バックアップ復元後の TTL**
-> Spanner のバックアップからデータベースを復元すると、**ROW DELETION POLICY（TTL ポリシー）の自動削除タスクが一時停止**された状態で復元される。何もしないと TTL が効かず古いデータが溜まり続けるため、復元後は以下を必ず実施:
-> 1. `SPANNER_SYS.ROW_DELETION_POLICIES` で TTL ポリシーの存在を確認
-> 2. 必要に応じて `ALTER TABLE ... REPLACE ROW DELETION POLICY` でポリシーを再設定、または再有効化
-> 3. 復元直後は大量削除が走るので、削除負荷が本番 CPU を圧迫しないかを監視
-> 詳細は [バックアップ運用ポリシー](./backup-policy.md) を参照。
+> Spanner のバックアップからデータベースを復元すると、**ROW DELETION POLICY（TTL ポリシー）は自動的にドロップ（削除）される**（公式仕様）。何もしないと TTL が効かず古いデータが溜まり続けるため、復元後は以下を必ず実施:
+> 1. `SPANNER_SYS.ROW_DELETION_POLICIES` で TTL ポリシーの有無を確認（復元直後は空のはず）
+> 2. `ALTER TABLE ... ADD ROW DELETION POLICY (...)` でポリシーを**再定義**する（REPLACE ではなく新規 ADD）
+> 3. 再定義直後は滞留していた古いデータの大量削除が走るので、削除負荷が本番 CPU を圧迫しないかを監視
+> 詳細は [バックアップ運用ポリシー](./backup-policy.md) および [公式ドキュメント](https://cloud.google.com/spanner/docs/ttl/manage-ttl) を参照。
 
 ### ルール 5: 大量 DML は Partitioned DML を使う
 
