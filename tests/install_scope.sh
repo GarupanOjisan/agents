@@ -28,8 +28,10 @@ trap 'rm -rf "$TMP_DIR"' EXIT
 
 HOME_DIR="$TMP_DIR/home"
 REPO_COPY="$TMP_DIR/repo"
+TARGET_REPO="$TMP_DIR/target-repo"
 mkdir -p "$HOME_DIR"
 cp -R "$ROOT_DIR" "$REPO_COPY"
+mkdir -p "$TARGET_REPO/.git/info"
 
 rm -rf "$REPO_COPY/.claude/skills" "$REPO_COPY/.git/info/exclude"
 mkdir -p "$REPO_COPY/.git/info"
@@ -54,6 +56,11 @@ mkdir -p "$REPO_COPY/.git/info"
     assert_dir "$REPO_COPY/.claude/skills/mysql-ops"
     assert_file_contains "$REPO_COPY/.git/info/exclude" ".claude/skills/mysql-ops/"
 
+    HOME="$HOME_DIR" ./install.sh --scope repo-user --repo "$TARGET_REPO" cloud-troubleshooting >/tmp/install-target-repo.out
+    assert_dir "$TARGET_REPO/.claude/skills/cloud-troubleshooting"
+    assert_no_dir "$REPO_COPY/.claude/skills/cloud-troubleshooting"
+    assert_file_contains "$TARGET_REPO/.git/info/exclude" ".claude/skills/cloud-troubleshooting/"
+
     HOME="$HOME_DIR" ./install.sh --scope repo-user --uninstall mysql-ops >/tmp/uninstall-repo-user.out
     assert_no_dir "$REPO_COPY/.claude/skills/mysql-ops"
     assert_file_contains "$REPO_COPY/.git/info/exclude" ".claude/skills/mysql-ops/"
@@ -61,6 +68,15 @@ mkdir -p "$REPO_COPY/.git/info"
     HOME="$HOME_DIR" ./install.sh --scope repo-team --list > /tmp/list-repo-team.out
     grep -F "Scope: repo-team" /tmp/list-repo-team.out >/dev/null || fail "list should show scope"
     grep -E '^  swe[[:space:]]+swe[[:space:]]+yes$' /tmp/list-repo-team.out >/dev/null || fail "list should report repo-team install"
+
+    cat > "$TMP_DIR/install-targets.tsv" <<EOF
+user - swe
+repo-user $TARGET_REPO sre cloud-troubleshooting
+EOF
+    HOME="$HOME_DIR" "$REPO_COPY/sync-installs.sh" "$TMP_DIR/install-targets.tsv" >/tmp/sync-installs.out
+    assert_dir "$HOME_DIR/.claude/skills/swe"
+    assert_dir "$TARGET_REPO/.claude/skills/sre"
+    assert_dir "$TARGET_REPO/.claude/skills/cloud-troubleshooting"
 )
 
 echo "install scope tests passed"
