@@ -114,33 +114,48 @@ UNC は十分な証拠が揃うと APT または FIN に昇格する。
 - 初期アクセスブローカー（IAB）エコシステムの成長
 - エッジデバイス（VPN、ファイアウォール）のゼロデイ悪用の増加
 
-## Mandiant M-Trends 主要指標
+## Mandiant M-Trends 2026 主要指標
 
-### グローバル中央値 滞留時間（Dwell Time）
+Source:
+- M-Trends 2026: Data, Insights, and Strategies From the Frontlines, Google Cloud / Mandiant, published 2026-03-24: https://cloud.google.com/blog/topics/threat-intelligence/m-trends-2026/
 
-| 年 | 日数 |
-|----|------|
-| 2015 | 146日 |
-| 2018 | 78日 |
-| 2020 | 24日 |
-| 2022 | 16日 |
-| 2023 | 10日 |
+Use these as the default threat model baseline until a newer M-Trends / GTI report is incorporated.
 
-### 初期アクセスベクター（最近の傾向）
-1. 脆弱性悪用（~38%） — 最多
-2. フィッシング（~17%）
-3. 窃取クレデンシャル（~15%）
+### Frontline Metrics
 
-### 検出ソース
-- 内部検出が増加傾向（~54%）
-- ランサムウェアは「自己通知型」（身代金要求メモ = 検出）
+| Metric | 2025 observed value | Why it matters |
+|---|---:|---|
+| Global median dwell time | 14 days | Detection and scoping must assume adversaries may have operated for weeks. |
+| Espionage / North Korean IT worker median dwell time | 122 days | 90-day log retention is insufficient for long-running intrusions. |
+| Exploits as initial infection vector | 32% | Internet-facing exposure and patch validation are top CISO risks. |
+| Vishing as initial infection vector | 11% | Help desk, IdP, SaaS, and MFA recovery workflows must be tested. |
+| Internal first detection | 52% | Visibility is improving but still leaves many cases externally detected. |
+| Prior compromise in ransomware operations | 30% | Initial access brokers and reused access are a ransomware precondition. |
+| Initial access to secondary actor hand-off | 22 seconds median | Low-impact malware or initial-access alerts can precede high-impact intrusion almost immediately. |
 
-### 最も標的となる業界
-1. 金融サービス
-2. ビジネス/プロフェッショナルサービス
-3. テクノロジー
-4. 政府
-5. ヘルスケア
+### Practical Implications
+
+- Treat low-impact malware, ClickFix, suspicious browser downloads, SaaS token anomalies, and help desk social-engineering alerts as possible precursors to a secondary intrusion.
+- Prioritize vulnerability exploitation and internet-facing asset exposure over phishing-only mental models.
+- Build response playbooks that can isolate initial compromise before hands-on-keyboard activity begins.
+- Extend retention for identity, SaaS, VPN, edge-device, hypervisor, DNS, EDR, and cloud admin logs beyond 90 days for critical environments.
+- Protect recovery infrastructure as Tier-0: backup control planes, immutable storage, hypervisors, IdP, EDR admin plane, CI/CD, and privileged access management.
+
+### Current High-Priority Threat Themes
+
+1. **Recovery denial ransomware**: attackers target backup infrastructure, identity services, and virtualization management planes to prevent recovery.
+2. **SaaS identity compromise**: long-lived OAuth tokens, session cookies, help desk impersonation, and third-party SaaS vendor pivots enable data theft.
+3. **Edge and core network persistence**: VPNs, routers, and network appliances lack normal EDR telemetry and can host in-memory or reboot-resistant malware.
+4. **Exploit acceleration**: mean time to exploit can precede public patch availability for some campaigns; patch SLA alone is not enough.
+5. **AI-assisted intrusion support**: adversaries abuse AI and developer tooling inside compromised environments, but most successful intrusions still stem from fundamental control failures.
+
+### Review Prompts
+
+- What controls would catch the first low-impact access event before actor hand-off?
+- Which logs are retained long enough to scope a 122-day dwell-time scenario?
+- Can the organization rebuild identity, backup, and virtualization planes if they are targeted?
+- Which SaaS tokens, personal access tokens, and integrations can bypass normal MFA?
+- Which edge devices have admin logs forwarded and monitored centrally?
 
 ## Unit 42 脅威インテリジェンス
 

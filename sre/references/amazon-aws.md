@@ -1,5 +1,74 @@
 # Amazon/AWS 運用エクセレンスと信頼性
 
+Source references:
+- AWS Well-Architected Framework Reliability Pillar: https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/welcome.html
+- AWS Well-Architected Framework Operational Excellence Pillar: https://docs.aws.amazon.com/wellarchitected/latest/operational-excellence-pillar/welcome.html
+- AWS Well-Architected Operational Excellence, Operate: https://docs.aws.amazon.com/wellarchitected/latest/operational-excellence-pillar/operate.html
+- Application Load Balancer monitoring: https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-monitoring.html
+- Application Load Balancer CloudWatch metrics: https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-cloudwatch-metrics.html
+
+Use this reference when reviewing AWS workloads, DR plans, quota risk, Multi-AZ/Multi-Region architecture, RDS/Aurora reliability, or operational mechanisms.
+For active AWS service troubleshooting, 5xx, latency, timeouts, DNS, IAM/auth, quota, deployment regressions, or dependency degradation, start with the `cloud-troubleshooting` skill and use this file only for AWS reliability context.
+
+## AWS Review Output Contract
+
+Every AWS reliability review should explicitly cover:
+
+```markdown
+## AWS Reliability Review
+- Workload:
+- Region / accounts:
+- Critical user journey:
+- SLO:
+
+## Required Checks
+- Service quotas / fixed constraints:
+- Failover headroom:
+- Automated recovery:
+- Multi-AZ / Multi-Region design:
+- Data backup / restore / DR:
+- Deployment rollback:
+- Observability:
+- GameDay / FIS validation:
+
+## Risks
+| Severity | Risk | Evidence | AWS mechanism | Recommendation |
+|---|---|---|---|---|
+```
+
+## Reliability Pillar Must-Checks
+
+- **Service quotas and constraints**: know current usage, hard limits, failover headroom, and quota automation.
+- **Automated recovery**: prefer health checks, autoscaling, managed failover, and self-healing workflows over manual intervention.
+- **Horizontal scaling**: design stateless compute and bounded stateful components.
+- **Change management**: deploy through automation, canary/blue-green where useful, and tested rollback.
+- **Backup and DR**: define RTO/RPO per data class and test restore, not only backup creation.
+- **Fault isolation**: use cells, bulkheads, shuffle sharding, queues, and per-tenant isolation where blast radius matters.
+
+## Quota / Failover Checklist
+
+- Current steady-state usage is below alert threshold.
+- Failover scenario has enough quota in target AZ/region/account.
+- Quota increase requests are automated or runbooked.
+- Fixed constraints are accommodated by architecture, not wished away.
+- GameDay validates scale-out and failover quota assumptions.
+
+## Operational Troubleshooting Entry Points
+
+For production symptoms, do not stop at Well-Architected review language. Route to concrete evidence:
+
+| Symptom | First AWS split | Evidence |
+|---|---|---|
+| 5xx | load balancer generated vs target generated | ALB/NLB/API Gateway/CloudFront metrics and access logs |
+| Latency | edge wait vs target response vs dependency | target response time, service duration, traces, queue age |
+| Timeout | client/LB/runtime/dependency timeout | access logs, idle timeout, app logs, dependency spans |
+| DNS/routing | Route 53 answer vs health/failover policy | record changes, health checks, resolver output |
+| IAM/auth/KMS | principal/policy/key/secret change | CloudTrail and service error codes |
+| Quota/capacity | hard quota vs saturation/autoscaling lag | Service Quotas, throttles, autoscaling activity |
+| Deploy regression | new version/task set only vs all versions | deployment events, target group health, version labels |
+
+Use the `cloud-troubleshooting` skill reference `references/aws-service-troubleshooting.md` for the detailed playbook.
+
 ## 1. Well-Architected Framework - Operational Excellence
 
 ### 設計原則
