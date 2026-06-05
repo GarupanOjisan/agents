@@ -1,5 +1,51 @@
 # Netflix 信頼性エンジニアリングとカオスエンジニアリング
 
+Source references:
+- Netflix Chaos Monkey: https://github.com/Netflix/chaosmonkey
+- Netflix / Google Kayenta automated canary analysis: https://www.engineering.fyi/article/automated-canary-analysis-at-netflix-with-kayenta
+- Principles of Chaos Engineering: https://principlesofchaos.org/
+
+Use this reference for chaos experiments, failure injection, canary analysis, resilience validation, and release safety.
+
+## Experiment Contract
+
+Never run or recommend a chaos experiment without this contract:
+
+```markdown
+## Experiment Contract
+- Hypothesis:
+- Steady-state metric:
+- Target system:
+- Fault injection:
+- Blast radius:
+- Abort / kill switch:
+- Observation window:
+- Success criteria:
+- Failure criteria:
+- Rollback:
+- Owner:
+```
+
+## Safety Gates
+
+- The protected user journey and SLO are known.
+- A steady-state metric is business/user-visible, not only infrastructure health.
+- Blast radius is intentionally bounded.
+- Abort conditions are automatic where possible.
+- On-call and stakeholders know the schedule.
+- Rollback or traffic shift is ready before injection.
+- The experiment records results and creates follow-up actions.
+
+## Automated Canary Analysis Contract
+
+For canary or progressive delivery:
+
+- Define baseline and canary populations.
+- Compare critical, high, and informational metrics separately.
+- Critical metrics failing should fail the canary regardless of aggregate score.
+- Include rollback criteria and post-rollback validation.
+- Prefer automated judgement for repeated releases, with human review for ambiguous high-impact launches.
+
 ## 1. カオスエンジニアリングの5原則
 
 > カオスエンジニアリングとは、本番環境における分散システムの信頼性に対する確信を高めるために、システムに対して実験的な障害を注入する規律ある手法。

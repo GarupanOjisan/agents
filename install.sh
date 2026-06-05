@@ -2,22 +2,24 @@
 set -euo pipefail
 
 # ============================================================
-# install.sh — Install skills from this repo to ~/.claude/skills/
+# install.sh — Install skills from this repo to Claude Code skill scopes
 # ============================================================
 #
 # Usage:
-#   ./install.sh            # Install all skills
-#   ./install.sh sre        # Install specific skill(s) by name
-#   ./install.sh soc sre    # Install multiple specific skills
-#   ./install.sh --list     # List available skills
-#   ./install.sh --uninstall sre  # Uninstall a skill
+#   ./install.sh                         # Install all skills to user scope
+#   ./install.sh sre                     # Install specific skill(s) by name
+#   ./install.sh --scope repo-team sre   # Install to .claude/skills for team sharing
+#   ./install.sh --scope repo-user sre   # Install to .claude/skills and exclude locally
+#   ./install.sh --list                  # List available skills in user scope
+#   ./install.sh --uninstall sre         # Uninstall a skill from user scope
 #
 # Skills are discovered by finding SKILL.md files with a
 # `name:` field in their YAML frontmatter. Each skill directory
-# (SKILL.md + references/ etc.) is copied to ~/.claude/skills/{name}/.
+# (SKILL.md + references/ etc.) is copied to the selected scope.
 
 REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
-SKILLS_DIR="${HOME}/.claude/skills"
+SCOPE="user"
+SKILLS_DIR=""
 
 # Colors
 RED='\033[0;31m'
@@ -32,6 +34,67 @@ log_info()  { echo -e "${CYAN}[info]${NC}  $*"; }
 log_ok()    { echo -e "${GREEN}[ok]${NC}    $*"; }
 log_warn()  { echo -e "${YELLOW}[warn]${NC}  $*"; }
 log_err()   { echo -e "${RED}[error]${NC} $*" >&2; }
+
+normalize_scope() {
+    local scope="$1"
+    case "$scope" in
+        user|global)
+            echo "user"
+            ;;
+        repo|repository|project|team|repo-team|repository-team|project-team)
+            echo "repo-team"
+            ;;
+        local|repo-user|repository-user|project-user|user-repo)
+            echo "repo-user"
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+
+scope_description() {
+    case "$SCOPE" in
+        user)
+            echo "user/global (${HOME}/.claude/skills)"
+            ;;
+        repo-team)
+            echo "repository/team-shared (${REPO_DIR}/.claude/skills)"
+            ;;
+        repo-user)
+            echo "repository/user-only (${REPO_DIR}/.claude/skills, locally excluded via .git/info/exclude)"
+            ;;
+    esac
+}
+
+resolve_skills_dir() {
+    case "$SCOPE" in
+        user)
+            echo "${HOME}/.claude/skills"
+            ;;
+        repo-team|repo-user)
+            echo "${REPO_DIR}/.claude/skills"
+            ;;
+    esac
+}
+
+add_repo_user_exclude() {
+    local name="$1"
+    local exclude_file="${REPO_DIR}/.git/info/exclude"
+    local pattern=".claude/skills/${name}/"
+
+    if [[ ! -d "${REPO_DIR}/.git" ]]; then
+        log_warn "${name}: cannot add repo-user exclude because ${REPO_DIR}/.git does not exist"
+        return 0
+    fi
+
+    mkdir -p "$(dirname "$exclude_file")"
+    touch "$exclude_file"
+    if ! grep -Fqx "$pattern" "$exclude_file"; then
+        echo "$pattern" >> "$exclude_file"
+        log_info "${name}: added ${pattern} to .git/info/exclude"
+    fi
+}
 
 # Extract the `name:` value from SKILL.md YAML frontmatter
 extract_skill_name() {
@@ -101,6 +164,10 @@ install_skill() {
         fi
     done
 
+    if [[ "$SCOPE" == "repo-user" ]]; then
+        add_repo_user_exclude "$name"
+    fi
+
     log_ok "${name}: installed to ${dest_dir}"
 }
 
@@ -120,8 +187,6 @@ uninstall_skill() {
 # --- main ----------------------------------------------------------
 
 main() {
-    mkdir -p "$SKILLS_DIR"
-
     # Parse arguments
     local mode="install"
     local targets=()
@@ -136,6 +201,27 @@ main() {
                 mode="uninstall"
                 shift
                 ;;
+            --scope|-s)
+                if [[ $# -lt 2 ]]; then
+                    log_err "--scope requires one of: user, repo-team, repo-user"
+                    exit 1
+                fi
+                if ! SCOPE="$(normalize_scope "$2")"; then
+                    log_err "Unknown scope: $2"
+                    echo "  Available scopes: user (global), repo-team, repo-user"
+                    exit 1
+                fi
+                shift 2
+                ;;
+            --scope=*)
+                local raw_scope="${1#--scope=}"
+                if ! SCOPE="$(normalize_scope "$raw_scope")"; then
+                    log_err "Unknown scope: $raw_scope"
+                    echo "  Available scopes: user (global), repo-team, repo-user"
+                    exit 1
+                fi
+                shift
+                ;;
             --help|-h)
                 mode="help"
                 shift
@@ -146,6 +232,8 @@ main() {
                 ;;
         esac
     done
+
+    SKILLS_DIR="$(resolve_skills_dir)"
 
     # Discover all skills in repo
     discover_skills
@@ -160,19 +248,29 @@ main() {
             echo "Usage: $0 [options] [skill_name ...]"
             echo ""
             echo "Options:"
-            echo "  --list, -l        List available skills"
-            echo "  --uninstall, -u   Uninstall specified skill(s)"
-            echo "  --help, -h        Show this help"
+            echo "  --scope, -s SCOPE  Install/list/uninstall scope: user, repo-team, repo-user"
+            echo "  --list, -l         List available skills"
+            echo "  --uninstall, -u    Uninstall specified skill(s)"
+            echo "  --help, -h         Show this help"
+            echo ""
+            echo "Scopes:"
+            echo "  user       Global user scope: ~/.claude/skills"
+            echo "  repo-team  Repository team-shared scope: .claude/skills"
+            echo "  repo-user  Repository user-only scope: .claude/skills plus .git/info/exclude"
             echo ""
             echo "Examples:"
-            echo "  $0                Install all skills"
-            echo "  $0 sre soc        Install specific skills"
-            echo "  $0 -u sre         Uninstall a skill"
+            echo "  $0                         Install all skills to user scope"
+            echo "  $0 sre security-ciso       Install specific skills to user scope"
+            echo "  $0 --scope repo-team sre   Install a team-shared project skill"
+            echo "  $0 --scope repo-user sre   Install a local-only project skill"
+            echo "  $0 -s repo-team --list     List project team-shared installs"
+            echo "  $0 -s user -u sre          Uninstall a user-scope skill"
             ;;
 
         list)
             echo ""
             echo "Available skills in ${REPO_DIR}:"
+            echo "Scope: ${SCOPE} ($(scope_description))"
             echo ""
             printf "  %-20s %-50s %s\n" "NAME" "SOURCE" "INSTALLED"
             printf "  %-20s %-50s %s\n" "----" "------" "---------"
