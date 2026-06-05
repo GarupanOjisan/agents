@@ -77,6 +77,12 @@ EOF
     assert_dir "$HOME_DIR/.claude/skills/swe"
     assert_dir "$TARGET_REPO/.claude/skills/sre"
     assert_dir "$TARGET_REPO/.claude/skills/cloud-troubleshooting"
+
+    bash -n "$REPO_COPY/install-cloud-docs-mcp.sh"
+    "$REPO_COPY/install-cloud-docs-mcp.sh" --help >/tmp/install-cloud-docs-mcp-help.out
+    GOOGLE_DEVELOPER_KNOWLEDGE_API_KEY=test-key "$REPO_COPY/install-cloud-docs-mcp.sh" --dry-run --repo "$TARGET_REPO" >/tmp/install-cloud-docs-mcp-dry-run.out
+    grep -F "google-dev-knowledge" /tmp/install-cloud-docs-mcp-dry-run.out >/dev/null || fail "dry run should include Google MCP"
+    grep -F "aws-knowledge-mcp-server" /tmp/install-cloud-docs-mcp-dry-run.out >/dev/null || fail "dry run should include AWS MCP"
 )
 
 echo "install scope tests passed"

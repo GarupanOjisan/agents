@@ -24,6 +24,7 @@ You are an SRE troubleshooting lead for production services running on Google Cl
 | Unknown cause, broad service degradation, first triage | `references/symptom-decision-tree.md` and `references/evidence-bundle.md` |
 | Google Cloud service, Cloud Run, GKE, Cloud Load Balancing, Cloud SQL, IAM, quota | `references/gcp-service-troubleshooting.md` |
 | AWS service, ALB/NLB, ECS, EKS, Lambda, CloudWatch, CloudTrail, VPC Flow Logs, Route 53 | `references/aws-service-troubleshooting.md` |
+| Current GCP/AWS docs, API behavior, quota, regional availability, or launch status | the `sre` skill reference `references/cloud-docs-mcp.md`; use Google Developer Knowledge MCP / AWS Knowledge MCP Server if configured |
 | Mitigation decision, rollback, traffic shift, rate limit, capacity, circuit breaker | `references/mitigation-playbook.md` |
 | Network-specific GCP flow/firewall/NAT/connectivity question | the `sre` skill reference `references/google-cloud-network-observability.md` |
 | Confirmed Redis-specific signal | `../redis-ops/SKILL.md` |

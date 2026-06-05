@@ -79,6 +79,20 @@ repo-user /Users/m0tch/dev/security-work security-ciso security-pentester
 
 これで `swe` は global に更新し、業務特化ハーネスは必要なリポジトリだけに更新できます。
 
+### Cloud Docs MCP
+
+GCP/AWS の最新公式ドキュメントを Claude Code から参照する場合は、必要なリポジトリで MCP を local scope に入れます。
+
+```bash
+# Google Developer Knowledge MCP + AWS Knowledge MCP Server
+GOOGLE_DEVELOPER_KNOWLEDGE_API_KEY=... ./install-cloud-docs-mcp.sh --repo /path/to/repo
+
+# AWS Knowledge MCP Server only
+./install-cloud-docs-mcp.sh --repo /path/to/repo --skip-google
+```
+
+Google Developer Knowledge MCP は Developer Knowledge API キーが必要です。API キーはリポジトリに保存しないでください。AWS Knowledge MCP Server は認証不要です。
+
 ## External Sources Incorporated
 
 このリポジトリでは、第三者の公開スキルや資料を丸ごと無検証で取り込まず、業務カテゴリに合う部分を参照資料として要約・適用しています。
@@ -88,6 +102,7 @@ repo-user /Users/m0tch/dev/security-work security-ciso security-pentester
 | Anthropic public Agent Skills / Claude Code skill-development patterns | `swe/references/agent-skill-development.md`, `swe/references/testing.md` |
 | Google public Agent Skills, Google Cloud troubleshooting docs, and Google Cloud Well-Architected Framework | `sre/cloud-troubleshooting/`, `sre/references/google-cloud-waf-reliability.md`, `sre/references/google-cloud-network-observability.md`, `security/ciso/references/cloud-security-governance.md` |
 | AWS Well-Architected, CloudWatch, ALB, and operational runbook docs | `sre/cloud-troubleshooting/`, `sre/references/amazon-aws.md` |
+| Google Developer Knowledge MCP / AWS Knowledge MCP Server | `install-cloud-docs-mcp.sh`, `sre/references/cloud-docs-mcp.md` |
 | MySQL / Google Cloud SQL / AWS RDS / Aurora official docs | `sre/mysql-ops/` |
 | Cloudflare Agents / Workers / Zero Trust / WAF docs | `sre/references/cloudflare-edge-ops.md`, `security/ciso/references/cloud-security-governance.md`, `security/pentester/references/cloud-pentest.md` |
 | OWASP / NIST / CIS / MITRE public frameworks | `security/ciso/references/ciso-program.md`, `security/pentester/references/web-api-pentest.md`, existing SOC references |
