@@ -1,0 +1,10 @@
+# Copy this file to install-targets.tsv or pass your own manifest to sync-installs.sh.
+# Format:
+#   scope  repo-path-or--  skill [skill ...]
+#
+# Recommended default:
+user - swe
+#
+# Install work-specific harnesses only where they are needed:
+# repo-user /Users/m0tch/dev/SingColor/singcolor-server sre cloud-troubleshooting mysql-ops redis-ops
+# repo-user /Users/m0tch/dev/security-work security-ciso security-pentester

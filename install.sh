@@ -10,6 +10,7 @@ set -euo pipefail
 #   ./install.sh sre                     # Install specific skill(s) by name
 #   ./install.sh --scope repo-team sre   # Install to .claude/skills for team sharing
 #   ./install.sh --scope repo-user sre   # Install to .claude/skills and exclude locally
+#   ./install.sh --scope repo-user --repo /path/to/repo sre
 #   ./install.sh --list                  # List available skills in user scope
 #   ./install.sh --uninstall sre         # Uninstall a skill from user scope
 #
@@ -18,6 +19,7 @@ set -euo pipefail
 # (SKILL.md + references/ etc.) is copied to the selected scope.
 
 REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
+TARGET_REPO_DIR="$REPO_DIR"
 SCOPE="user"
 SKILLS_DIR=""
 
@@ -59,10 +61,10 @@ scope_description() {
             echo "user/global (${HOME}/.claude/skills)"
             ;;
         repo-team)
-            echo "repository/team-shared (${REPO_DIR}/.claude/skills)"
+            echo "repository/team-shared (${TARGET_REPO_DIR}/.claude/skills)"
             ;;
         repo-user)
-            echo "repository/user-only (${REPO_DIR}/.claude/skills, locally excluded via .git/info/exclude)"
+            echo "repository/user-only (${TARGET_REPO_DIR}/.claude/skills, locally excluded via .git/info/exclude)"
             ;;
     esac
 }
@@ -73,18 +75,27 @@ resolve_skills_dir() {
             echo "${HOME}/.claude/skills"
             ;;
         repo-team|repo-user)
-            echo "${REPO_DIR}/.claude/skills"
+            echo "${TARGET_REPO_DIR}/.claude/skills"
             ;;
     esac
 }
 
+resolve_target_repo() {
+    local repo="$1"
+    if [[ ! -d "$repo" ]]; then
+        log_err "Target repository directory does not exist: $repo"
+        exit 1
+    fi
+    (cd "$repo" && pwd)
+}
+
 add_repo_user_exclude() {
     local name="$1"
-    local exclude_file="${REPO_DIR}/.git/info/exclude"
+    local exclude_file="${TARGET_REPO_DIR}/.git/info/exclude"
     local pattern=".claude/skills/${name}/"
 
-    if [[ ! -d "${REPO_DIR}/.git" ]]; then
-        log_warn "${name}: cannot add repo-user exclude because ${REPO_DIR}/.git does not exist"
+    if [[ ! -d "${TARGET_REPO_DIR}/.git" ]]; then
+        log_warn "${name}: cannot add repo-user exclude because ${TARGET_REPO_DIR}/.git does not exist"
         return 0
     fi
 
@@ -222,6 +233,19 @@ main() {
                 fi
                 shift
                 ;;
+            --repo|--target-repo|--target)
+                if [[ $# -lt 2 ]]; then
+                    log_err "$1 requires a repository path"
+                    exit 1
+                fi
+                TARGET_REPO_DIR="$(resolve_target_repo "$2")"
+                shift 2
+                ;;
+            --repo=*|--target-repo=*|--target=*)
+                local raw_repo="${1#*=}"
+                TARGET_REPO_DIR="$(resolve_target_repo "$raw_repo")"
+                shift
+                ;;
             --help|-h)
                 mode="help"
                 shift
@@ -249,20 +273,22 @@ main() {
             echo ""
             echo "Options:"
             echo "  --scope, -s SCOPE  Install/list/uninstall scope: user, repo-team, repo-user"
+            echo "  --repo PATH        Target repository for repo-team/repo-user scopes"
             echo "  --list, -l         List available skills"
             echo "  --uninstall, -u    Uninstall specified skill(s)"
             echo "  --help, -h         Show this help"
             echo ""
             echo "Scopes:"
             echo "  user       Global user scope: ~/.claude/skills"
-            echo "  repo-team  Repository team-shared scope: .claude/skills"
-            echo "  repo-user  Repository user-only scope: .claude/skills plus .git/info/exclude"
+            echo "  repo-team  Repository team-shared scope: REPO/.claude/skills"
+            echo "  repo-user  Repository user-only scope: REPO/.claude/skills plus REPO/.git/info/exclude"
             echo ""
             echo "Examples:"
             echo "  $0                         Install all skills to user scope"
             echo "  $0 sre security-ciso       Install specific skills to user scope"
             echo "  $0 --scope repo-team sre   Install a team-shared project skill"
             echo "  $0 --scope repo-user sre   Install a local-only project skill"
+            echo "  $0 --scope repo-user --repo /path/to/app sre cloud-troubleshooting"
             echo "  $0 -s repo-team --list     List project team-shared installs"
             echo "  $0 -s user -u sre          Uninstall a user-scope skill"
             ;;

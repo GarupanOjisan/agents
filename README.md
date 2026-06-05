@@ -23,6 +23,7 @@
 ```
 
 `install.sh` は `SKILL.md` を再帰的に探索し、frontmatter の `name` を使って選択したスコープにコピーします。
+別リポジトリへ repo scope で入れる場合は `--repo /path/to/repo` を指定します。
 
 ### Install Scopes
 
@@ -44,10 +45,39 @@ Examples:
 # Local-only project install. The installed skill path is added to .git/info/exclude.
 ./install.sh --scope repo-user swe
 
+# Install from this harness repo into another repository.
+./install.sh --scope repo-user --repo /path/to/repo sre cloud-troubleshooting mysql-ops
+
 # List or uninstall in a specific scope.
 ./install.sh --scope repo-team --list
 ./install.sh --scope user --uninstall sre
 ```
+
+### Bulk Updates
+
+複数リポジトリに散らばった repo-local harness は `sync-installs.sh` で一括更新できます。
+
+```bash
+cp install-targets.example.tsv install-targets.tsv
+$EDITOR install-targets.tsv
+./sync-installs.sh install-targets.tsv
+```
+
+`install-targets.tsv` の形式:
+
+```text
+scope repo-path-or-- skill [skill ...]
+```
+
+例:
+
+```text
+user - swe
+repo-user /Users/m0tch/dev/SingColor/singcolor-server sre cloud-troubleshooting mysql-ops redis-ops
+repo-user /Users/m0tch/dev/security-work security-ciso security-pentester
+```
+
+これで `swe` は global に更新し、業務特化ハーネスは必要なリポジトリだけに更新できます。
 
 ## External Sources Incorporated
 
